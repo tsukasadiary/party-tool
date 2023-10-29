@@ -173,7 +173,7 @@ def grouping():
     # display(best_assignment, target="output")
     # display(best_penalty, target="output")
     display("次のグループ分け（$は休憩グループを表します）", target="output", append=False)
-    for line in output: display(line, target="output")
+    for line in output: display(" - " + line, target="output")
     
     # ステータス更新
     log = [sta + ";" for sta in status] + [out + ";" for out in output]
