@@ -180,8 +180,3 @@ def grouping():
     log_elem = Element("status")
     for line in output: log_elem.write("\n".join(log))
     
-    
-def clear_status():
-    for name in ["member", "group", "status"]:
-        elem = Element(name)
-        elem.write("")
