@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang='ja'>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
+        <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    </head>
+
+    <body>
+        <a href="../index.html">TOPページ</a></br>
+        PyScript君とじゃんけんをしましょう。</br>
+
+        <button py-click="janken(my_hand=0)" class="py-button">グー</button>
+        <button py-click="janken(my_hand=1)" class="py-button">チョキ</button>
+        <button py-click="janken(my_hand=2)" class="py-button">パー</button>
+
+        <div id="janken-result"></div>
+
+        <py-config>
+            [[fetch]]
+            files = ["./pyscripts/janken.py"]
+        </py-config>
+        <py-script src="./pyscripts/janken.py"></py-script>
+    </body>
+</html>

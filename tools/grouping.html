@@ -1,0 +1,47 @@
+<!DOCTYPE html>
+<html lang='ja'>
+    <head>
+        <meta charset="utf-8"/>
+        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+        <script defer src="https://pyscript.net/latest/pyscript.js"></script>
+    </head>
+
+    <body>
+        <py-config>
+            [[fetch]]
+            files = ["./pyscripts/grouping.py"]
+        </py-config>
+        <py-script src="./pyscripts/grouping.py"></py-script>
+
+        <a href="../index.html">TOPページ</a><br>
+        ※ページをリロードすると初期化されます。<br>
+
+        メンバーリスト（1行に1名を入力してください。メンバー名に空白は含まないでください。）：<br>
+        <textarea id="member" class="py-input" type="text" rows="10" cols=30>
+ちゃこレッド
+ちゃこグリーン
+ちゃこブルー
+ちゃこイエロー
+ちゃこピンク
+ちゃこホワイト
+ちゃこブラック
+ちゃこアクア
+ちゃこスカイ
+エターナルちゃこ
+        </textarea><br>
+
+        グループリスト（1行にグループ名とその人数を入力してください。グループ名に空白は含まないでください。）：<br>
+        <textarea id="group" class="py-input" type="text" rows="10" cols=30>
+アルファチーム 4
+ベータチーム 4
+        </textarea><br>
+        
+        <button id="run" class="py-button" type="submit" py-click="grouping()">実行</button><br>
+
+        出力：<br>
+        <div id="output"></div>
+
+        ステータス：<br>
+        <textarea id="status" class="py-input" type="text" rows="10" cols=100></textarea><br>
+    </body>
+</html>
