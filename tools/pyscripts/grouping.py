@@ -44,6 +44,8 @@ def fetch_status():
 
 def pair_matrix(member_id, group_name, group_size, status):
     """ペア行列の計算"""
+    # 対角成分：その人の直近の休憩ターン
+    # (i,j) 成分： i-j が一緒のグループになった回数
     n = len(member_id)
     A = [[0 for _ in range(n)] for _ in range(n)]
     
