@@ -2,53 +2,81 @@
 <html lang='ja'>
     <head>
         <meta charset="utf-8"/>
-        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css" />
+        <link rel="stylesheet" href="./css/common.css">
+        <link rel="stylesheet" href="https://pyscript.net/latest/pyscript.css"/>
         <script defer src="https://pyscript.net/latest/pyscript.js"></script>
     </head>
 
     <body>
+        <!-- PyScript -->
         <py-config>
-            [[fetch]]
-            files = ["./pyscripts/grouping.py"]
+            packages = ["numpy", "matplotlib", "seaborn"]
         </py-config>
-        <py-script src="./pyscripts/grouping.py"></py-script>
 
-        <a href="../index.html">TOPページ</a><br>
-        ※ページをリロードすると初期化されます。<br><br>
+        <script type="py" src="./pyscripts/grouping.py"></script>
 
-        メンバーリスト：<br>
-        1行に1名を入力してください。メンバー名に空白と半角のセミコロン ";" は含まないでください。<br>
-        <textarea id="member" class="py-input" type="text" rows="10" cols=30>
-ちゃこレッド
-ちゃこグリーン
-ちゃこブルー
-ちゃこイエロー
-ちゃこピンク
-ちゃこホワイト
-ちゃこブラック
-ちゃこアクア
-ちゃこスカイ
-エターナルちゃこ
-        </textarea><br><br>
+        <!-- Body -->
+        <h1>グループ分けツール</h1>
 
-        グループリスト：<br>
-        1行にグループ名とその人数を入力してください。グループ名に空白と半角のセミコロン ";" は含まないでください。<br>
-        <textarea id="group" class="py-input" type="text" rows="10" cols=30>
-アルファチーム 4
-ベータチーム 4
-        </textarea><br><br>
+        <!-- 情報入力 -->
+        <div class="flex">
+            <div>
+                <h2>メンバー名</h2>
+                <textarea id="member-names" class="py-input" type="text" rows="10" cols="20"></textarea>
+            </div>
+            <div>
+                <h2>グループ名</h2>
+                <textarea id="group-names" class="py-input" type="text" rows="10" cols="20"></textarea>
+            </div>
+            <div>
+                <h2>グループ人数</h2>
+                <textarea id="group-sizes" class="py-input" type="text" rows="10" cols="20"></textarea>
+            </div>
+        </div>
+        <br>
         
-        <button id="run" class="py-button" type="submit" py-click="grouping()">実行</button><br><br>
+        <!-- ツール実行 -->
+        <button class="py-button" type="submit" py-click="main()" >次のグループ分け</button>
 
-        出力：<br>
-        休憩グループ（余った人）を含むグループの割り当てを表示します。<br>
-        <div id="output"></div><br>
+        <!-- 結果 -->
+        <h2>結果</h2>
+        <div id="result"></div>
 
-        ステータス：<br>
-        過去のグループ分け履歴であり、次のグループ分けのための入力値です。<br>
-        自分で編集したり、コピーして保存しておくこともできます。<br>
-        <textarea id="status" class="py-input" type="text" rows="10" cols=100></textarea><br>
+        <!-- オプション -->
+        <h2>オプション</h2>
+        <div class="flex">
+            <input id="add-member" class="py-input" type="text" value="Comming Soon"/>
+            <button class="py-button" type="submit" py-click="add_member()">メンバー追加</button>
+        </div>
+        <br>
+        <div class="flex">
+            <input id="remove-member" class="py-input" type="text" value="Comming Soon"/>
+            <button class="py-button" type="submit" py-click="remove_member()">メンバー削除</button>
+        </div>
         
+        <div class="flex">
+            <!-- 統計 -->
+            <div>
+                <h2>統計</h2>
+                <span id="stats"></span>
+            </div>
+    
+            <!-- ツールステータス -->
+            <div>
+                <h2>ステータス</h2>
+                <textarea id="status" class="py-input" type="text" rows="10" cols="50"></textarea>
+            </div>
+        </div>
+
+        <!-- Initializer -->
+        <py-script>
+            initialize_member_info()
+            initialize_group_info()
+            initialize_status()
+            dump_pair_matrix()
+        </py-script>
+
+
         <small>&copy; <a href="https://twitter.com/tsukasa__diary" target="_blank" rel="noopener noreferrer">tsukasa_diary</a> 2023</small>
     </body>
 </html>
