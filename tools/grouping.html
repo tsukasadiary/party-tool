@@ -19,6 +19,7 @@
         <h1>グループ分けツール</h1>
         メンバー名、グループ名、グループ人数の各フォームを埋めて【次のグループ分け】をクリックすると初期のグループ分けが生成されます。<br>
         その後は【次のグループ分け】をクリックし続けるだけで新しいグループ分けが生成されていきます。<br>
+        <b>初期化する場合はリロードしてください。</b><br>
 
         <h2>特色</h2>
         <ul>
@@ -30,7 +31,7 @@
         <h2>注意事項</h2>
         <ul>
             <li>メンバー名およびグループ名に空白、","、";"が含まれてはいけません。</li>
-            <li>ステータス欄は内部プログラムのためのログ置き場です。改変してしまうとうまく動作しない場合があります。</li>
+            <li><b>誤って初期化（リロード）しないように注意してください。</b></li>
         </ul>
 
         <!-- 情報入力 -->
@@ -52,13 +53,13 @@
         
         <!-- ツール実行 -->
         <button class="py-button" type="submit" py-click="main()" >次のグループ分け</button>
-
+        
         <!-- 結果 -->
         <h2>結果</h2>
         <div id="result"></div>
-
         
         <div class="flex">
+
             <!-- オプション -->
             <div>
                 <h2>オプション</h2>
@@ -72,18 +73,18 @@
                     <button class="py-button" type="submit" py-click="remove_member()">メンバー削除</button>
                 </div>
             </div>
-            
+
             <!-- 統計 -->
             <div>
                 <h2>統計</h2>
                 <span id="stats"></span>
             </div>
+        </div>
     
-            <!-- ツールステータス -->
-            <div>
-                <h2>ステータス</h2>
-                <textarea id="status" class="py-input" type="text" rows="10" cols="50"></textarea>
-            </div>
+        <!-- ツールステータス（ユーザには見えない） -->
+        <div hidden>
+            <h2>ステータス</h2>
+            <textarea id="status" class="py-input" type="text" rows="10" cols="50"></textarea>
         </div>
 
         <!-- Initializer -->

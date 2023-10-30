@@ -281,6 +281,8 @@ def initialize_group_info():
     elem.write("4\n4")
 
 def initialize_status():
+    elem = Element("result")
+    elem.write("ここに結果が表示されます。")
     elem = Element("status")
     elem.write("empty;\n")
     
