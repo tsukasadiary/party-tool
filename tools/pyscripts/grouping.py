@@ -18,7 +18,8 @@ def dump_error(message):
     
     
 ##### output #####
-def dump_assignment(member_names, group_names, assignment):
+def dump_assignment(count, member_names, group_names, assignment):
+    # 新規出力
     idx = np.sort(np.where(assignment == -1)[0])
     G = [member_names[i] for i in idx]
     display("- 休憩: " + ", ".join(G), target="result", append=False)
@@ -26,18 +27,33 @@ def dump_assignment(member_names, group_names, assignment):
         idx = np.sort(np.where(assignment == k)[0])
         G = [member_names[i] for i in idx]
         display("- " + gname + ": " + ", ".join(G), target="result")
+        
+    # ログ出力
+    display(f"# {count}回目", target="log")
+    idx = np.sort(np.where(assignment == -1)[0])
+    G = [member_names[i] for i in idx]
+    display("- 休憩: " + ", ".join(G), target="log")
+    for k, gname in enumerate(group_names):
+        idx = np.sort(np.where(assignment == k)[0])
+        G = [member_names[i] for i in idx]
+        display("- " + gname + ": " + ", ".join(G), target="log")
+    display(f"----------", target="log")
 
 
-def dump_pair_matrix(A=None):
+def dump_pair_matrix(member_names=None, A=None):
     if A is None: A = np.zeros((10,10), dtype=int)
     n = A.shape[0]
     plt.close()
     plt.rcParams["figure.autolayout"] = True
+    # plt.rcParams['font.family'] = ["DejaVu Sans"]
     fig, ax = plt.subplots(figsize=(3,3))
     sns.heatmap(
         A, annot=True, cbar=False,
         linewidth=0.5, square=True, ax=ax
     )
+    # if member_names is not None:
+    #     ax.set_xticklabels(member_names)
+    #     ax.set_yticklabels(member_names)
     display(fig, target="stats", append=False)
 
 
@@ -91,28 +107,29 @@ def load_status():
 
 ##### Main Engine #####
 def next_break(n, group_sizes, latest_break, B):
-    b = n - np.sum(group_sizes)
-    idx_all = list(range(n))
-    
+    b = n - np.sum(group_sizes)    
     dmin, bmin = np.min(latest_break), np.min(B + np.diag([np.inf] * n))
-    count = np.diag(B).copy()
     
     idx_best, best_val = None, None
     for _ in range(100):
-        # 休憩回数の差が2以上になるペアが出てはいけない
-        while True:
-            idx = rng.sample(idx_all, b)
-            count[idx] += 1
-            vmin, vmax = np.min(count), np.max(count)
-            count[idx] -= 1
-            if vmax - vmin <= 1: break
+        # 休憩回数の差が2以上になるペアが出ないようにする
+        orig_idx = np.arange(n)
+        count = np.diag(B).copy()
+        
+        idx = []
+        for _ in range(b):
+            vmin = np.min(count)
+            i = rng.choice(np.where(count == vmin)[0].tolist())
+            idx.append(orig_idx[i])
+            orig_idx = np.delete(orig_idx, i)
+            count = np.delete(count, i)
             
         # 直近に休憩しているほどペナルティ
         val = np.sum((latest_break[idx] - dmin) ** 2)
         
         # 同時に休憩していることが多いほどペナルティ
         val += np.sum((B[np.ix_(idx,idx)] - bmin) ** 2)
-        val -= np.sum((count[idx] - bmin) ** 2)
+        val -= np.sum((np.diag(B)[idx] - bmin) ** 2)
         
         if best_val is None:
             idx_best = idx.copy()
@@ -139,28 +156,13 @@ def next_assignment(n, group_sizes, idx_break):
 
 def eval_assignment(assignment, A):
     """割り当てを評価"""
-    n = len(assignment)
-    penalty = 0
-        
-    # 過去にペアになった回数が多いほどペナルティ
-    vmin = np.min(A + np.diag([np.inf] * n))
-    for i in range(n):
-        if assignment[i] == -1: continue
-        for j in range(i+1,n):
-            if assignment[j] == -1: continue
-            if assignment[i] == assignment[j]:
-                penalty += 2 ** (A[i,j] - vmin)
-                
-    # 過去にペアになった回数が少ないほどペナルティ
-    vmax = np.max(A)
-    for i in range(n):
-        if assignment[i] == -1: continue
-        for j in range(i+1,n):
-            if assignment[j] == -1: continue
-            if assignment[i] != assignment[j]:
-                penalty += 2 ** (vmax - A[i,j])
-                
-    return penalty
+    k_max = np.max(assignment)
+    Q = A.copy()
+    for k in range(k_max + 1):
+        idx = np.where(assignment == k)[0]
+        Q[np.ix_(idx, idx)] += 1
+        for i in idx: Q[i,i] -= 1
+    return np.sum(Q ** 2)
 
 
 def main():
@@ -218,14 +220,14 @@ def main():
     best_assignment, best_penalty = assignment.copy(), eval_assignment(assignment, A)
     
     m = len(group_names)
-    for _ in range(1000):
+    for _ in range(n ** 2):
         targets = [np.where(assignment == k)[0] for k in range(m)]
         tar = rng.sample(list(range(m)), 2)
         i = rng.choice(targets[tar[0]])
         j = rng.choice(targets[tar[1]])
         assignment[i], assignment[j] = assignment[j], assignment[i]
         penalty = eval_assignment(assignment, A)
-        if best_penalty > penalty:
+        if best_penalty >= penalty:
             best_assignment = assignment.copy()
             best_penalty = penalty
         else:
@@ -243,18 +245,104 @@ def main():
         for i in idx: A[i,i] -= 1
     
     # 出力
-    dump_assignment(member_names, group_names, best_assignment)
+    dump_assignment(count, member_names, group_names, best_assignment)
     for i in range(n): A[i,i] = B[i,i] # 休憩回数を A にコピー
-    dump_pair_matrix(A)
+    dump_pair_matrix(member_names, A)
     dump_status(count, member_names, group_names, group_sizes, latest_break, A, B)
         
 
 ##### Options #####
 def add_member():
-    pass
+    # 読み込み
+    status = load_text_box("status")
+    if status[0] == "empty;":
+        display(f"まだグループ分けが開始されていません。", target="add-remove", append=False)
+        display(f"メンバーリストに直接追加してください。", target="add-remove")
+        return
+    else:
+        count, member_names, group_names, group_sizes, latest_break, A, B = load_status()
+        
+    # Validation        
+    name = load_text_box("add-member")[0]
+    if name in member_names:
+        display(f"{name}は既に存在します。", target="add-remove", append=False)
+        return
+    
+    # 追加の実行
+    n = len(member_names)
+    member_names.append(name)
+    latest_break = np.append(latest_break, count)
+    
+    A_new = np.zeros((n+1, n+1), dtype=int)
+    A_new[:n,:n] = A.copy()
+    for i in range(n):
+        idx = np.setdiff1d(np.arange(n), i)
+        A_new[i,n] = A_new[n,i] = int(np.mean(A[i,idx]))
+    
+    B_new = np.zeros((n+1, n+1), dtype=int)
+    B_new[:n,:n] = B.copy()
+    B_new[n,n] = np.max(np.diag(B))
+    
+    A = A_new
+    B = B_new
+    
+    # 出力
+    n = len(member_names)
+    for i in range(n): A[i,i] = B[i,i] # 休憩回数を A にコピー
+    dump_pair_matrix(member_names, A)
+    dump_status(count, member_names, group_names, group_sizes, latest_break, A, B)
+    display(f"{name}を追加しました。", target="add-remove", append=False)
+    display(f"{name}を追加しました。", target="log")
+    display(f"----------", target="log")
+    
+    # フォームをクリア
+    elem = Element("add-member")
+    elem.clear()
+    
 
 def remove_member():
-    pass
+    # 読み込み
+    status = load_text_box("status")
+    if status[0] == "empty;":
+        display(f"まだグループ分けが開始されていません。", target="add-remove", append=False)
+        display(f"メンバーリストから直接削除してください。", target="add-remove")
+        return
+    else:
+        count, member_names, group_names, group_sizes, latest_break, A, B = load_status()
+    
+    # Validation
+    name = load_text_box("remove-member")[0]
+    if name not in member_names:
+        display(f"{name}は存在しません。", target="add-remove", append=False)
+        return
+    
+    idx = member_names.index(name)
+    member_names.remove(name)
+    if len(member_names) < np.sum(group_sizes):
+        display(f"エラー：グループサイズの合計がメンバー数を超えてしまいます。", target="add-remove", append=False)
+        display(f"これ以上のメンバー削除は初期化でしか解決できません。", target="add-remove", append=False)
+        return
+    
+    # 削除の実行
+    A = np.delete(A, idx, axis=0)
+    A = np.delete(A, idx, axis=1)
+    B = np.delete(B, idx, axis=0)
+    B = np.delete(B, idx, axis=1)
+    latest_break = np.delete(latest_break, idx)
+    
+    # 出力
+    n = len(member_names)
+    for i in range(n): A[i,i] = B[i,i] # 休憩回数を A にコピー
+    dump_pair_matrix(member_names, A)
+    dump_status(count, member_names, group_names, group_sizes, latest_break, A, B)
+    display(f"{name}を削除しました", target="add-remove", append=False)
+    display(f"{name}を削除しました。", target="log")
+    display(f"----------", target="log")
+    
+    # フォームをクリア
+    elem = Element("remove-member")
+    elem.clear()
+    
     
 ##### Initializer #####
 def initialize_member_info():

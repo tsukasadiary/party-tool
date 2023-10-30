@@ -15,7 +15,10 @@
 
         <script type="py" src="./pyscripts/grouping.py"></script>
 
-        <!-- Body -->
+        <!-- トップへのリンク -->
+        <a href="../index.html">TOPページ</a><br>
+
+        <!-- 説明 -->
         <h1>グループ分けツール</h1>
         メンバー名、グループ名、グループ人数の各フォームを埋めて【次のグループ分け】をクリックすると初期のグループ分けが生成されます。<br>
         その後は【次のグループ分け】をクリックし続けるだけで新しいグループ分けが生成されていきます。<br>
@@ -26,6 +29,7 @@
             <li>なるべく回数の多いペアを避け、回数の少ないペアを優先します。</li>
             <li>休憩回数（余りになった回数）が均等になるようにします。</li>
             <li>統計情報としてこれまでの休憩回数とペアの回数が可視化されます。（ぶっちゃけデバッグ用）</li>
+            <li>ページの末尾でこれまでのグループ分け履歴が見れます。</li>
         </ul>
 
         <h2>注意事項</h2>
@@ -58,27 +62,35 @@
         <h2>結果</h2>
         <div id="result"></div>
         
-        <div class="flex">
-
-            <!-- オプション -->
-            <div>
-                <h2>オプション</h2>
-                <div class="flex">
-                    <input id="add-member" class="py-input" type="text" value="Comming Soon"/>
-                    <button class="py-button" type="submit" py-click="add_member()">メンバー追加</button>
-                </div>
-                <br>
-                <div class="flex">
-                    <input id="remove-member" class="py-input" type="text" value="Comming Soon"/>
-                    <button class="py-button" type="submit" py-click="remove_member()">メンバー削除</button>
-                </div>
+        <!-- <div class="flex"> -->
+        <!-- オプション -->
+        <div>
+            <h2>オプション</h2>
+            <div class="flex">
+                <input id="add-member" class="py-input" type="text"/>
+                <button class="py-button" type="submit" py-click="add_member()">メンバー追加</button>
             </div>
-
-            <!-- 統計 -->
-            <div>
-                <h2>統計</h2>
-                <span id="stats"></span>
+            <br>
+            <div class="flex">
+                <input id="remove-member" class="py-input" type="text"/>
+                <button class="py-button" type="submit" py-click="remove_member()">メンバー削除</button>
             </div>
+            <br>
+            <div id="add-remove"></div>
+        </div>
+
+        <!-- 統計 -->
+        <div>
+            <h2>統計</h2>
+            ※後から追加されたメンバーの統計はダミーです。<br>
+            <span id="stats"></span>
+        </div>
+        <!-- </div> -->
+
+        <!-- 履歴 -->
+        <div>
+            <h2>履歴</h2>
+            <div id="log"></div>
         </div>
     
         <!-- ツールステータス（ユーザには見えない） -->
