@@ -193,12 +193,14 @@ def main():
             dump_error("エラー：グループサイズの合計がメンバー数を超えています")
             return
         
-        # フォームのクリア  
-        elem = Element("member-names")
-        elem.clear()
-        elem = Element("group-names")
-        elem.clear()
-        elem = Element("group-sizes")
+        # フォームのクリア
+        # elem = Element("member-names")
+        # elem.clear()
+        # elem = Element("group-names")
+        # elem.clear()
+        # elem = Element("group-sizes")
+        # elem.clear()
+        elem = Element("inputs")
         elem.clear()
         
         # ペアの初期化
@@ -293,7 +295,7 @@ def add_member():
     dump_status(count, member_names, group_names, group_sizes, latest_break, A, B)
     display(f"{name}を追加しました。", target="add-remove", append=False)
     display(f"{name}を追加しました。", target="log")
-    display(f"----------", target="log")
+    display(f"----------", target="log")    
     
     # フォームをクリア
     elem = Element("add-member")
